@@ -1,0 +1,253 @@
+<div class="container my-5">
+  <%- include('../partials/notifications') %>
+  <button
+    class="btn btn-primary"
+    data-bs-toggle="modal"
+    data-bs-target="#addMaterialModal"
+  >
+    Add New Materials
+  </button>
+
+  <div class="mt-4">
+    <h4>Raw Material List</h4>
+    <% if (rawBarangs.length === 0) { %>
+    <div class="alert alert-info text-center mt-3">
+      No raw material data available.
+    </div>
+    <% } else { %>
+    <div class="row mt-3">
+      <% rawBarangs.forEach((item) => { %>
+      <div class="col-md-4 mb-4">
+        <div class="card h-100">
+          <% if (item.image) { %>
+          <img
+            src="<%= item.image %>"
+            class="card-img-top"
+            alt="Material Image"
+            style="height: 200px; object-fit: cover"
+          />
+          <% } else { %>
+          <div
+            class="card-img-top d-flex justify-content-center align-items-center bg-light"
+            style="height: 200px"
+          >
+            <em>No Image</em>
+          </div>
+          <% } %>
+          <div class="card-body">
+            <h5 class="card-title"><%= item.title %></h5>
+            <p class="card-text mb-1">
+              <strong></strong> Rp <%= item.harga.toLocaleString("id-ID") %>
+            </p>
+            <p class="card-text mb-1 text-muted">
+              <strong></strong> <%= item.description || '-' %>
+            </p>
+            <p class="card-text mb-1">
+              <strong>Stock Tersedia</strong>
+              <%= item.lastStockJumlah %>
+            </p>
+          </div>
+          <div class="card-footer d-flex justify-content-end gap-3">
+            <button
+              class="btn btn-sm btn-warning"
+              data-bs-toggle="modal"
+              data-bs-target="#editMaterialModal"
+              data-id="<%= item._id %>"
+              data-title="<%= item.title %>"
+              data-harga="<%= item.harga %>"
+              data-description="<%= item.description %>"
+              data-image="<%= item.image %>"
+            >
+              <i class="fas fa-edit"></i> Edit
+            </button>
+            <form
+              action="/admin/raw-materials/delete/<%= item._id %>"
+              method="POST"
+              onsubmit="return confirm('Are you sure?');"
+            >
+              <button class="btn btn-sm btn-danger">
+                <i class="fas fa-trash"></i> Delete
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+      <% }) %>
+    </div>
+    <% } %>
+  </div>
+</div>
+
+<!-- Modal -->
+<div
+  class="modal fade"
+  id="addMaterialModal"
+  tabindex="-1"
+  aria-labelledby="addMaterialLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form
+        action="/admin/raw-materials"
+        method="POST"
+        enctype="multipart/form-data"
+      >
+        <div class="modal-header">
+          <h5 class="modal-title" id="addMaterialLabel">Add New Material</h5>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          ></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label for="title" class="form-label">Title</label>
+            <input
+              type="text"
+              class="form-control"
+              name="title"
+              id="title"
+              required
+            />
+          </div>
+          <div class="mb-3">
+            <label for="harga" class="form-label">Harga</label>
+            <input
+              type="number"
+              class="form-control"
+              name="harga"
+              id="harga"
+              required
+            />
+          </div>
+          <div class="mb-3">
+            <label for="description" class="form-label">Description</label>
+            <textarea
+              class="form-control"
+              name="description"
+              id="description"
+              rows="3"
+            ></textarea>
+          </div>
+          <div class="mb-3">
+            <label for="image" class="form-label">Image</label>
+            <input
+              class="form-control"
+              type="file"
+              name="image"
+              id="image"
+              accept="image/*"
+            />
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            data-bs-dismiss="modal"
+          >
+            Close
+          </button>
+          <button type="submit" class="btn btn-primary">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Edit Modal -->
+<div
+  class="modal fade"
+  id="editMaterialModal"
+  tabindex="-1"
+  aria-labelledby="editMaterialLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form id="editMaterialForm" method="POST" enctype="multipart/form-data">
+        <input type="hidden" name="_method" value="PUT" />
+        <div class="modal-header">
+          <h5 class="modal-title" id="editMaterialLabel">Edit Material</h5>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          ></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label for="edit-title" class="form-label">Title</label>
+            <input
+              type="text"
+              class="form-control"
+              name="title"
+              id="edit-title"
+              required
+            />
+          </div>
+          <div class="mb-3">
+            <label for="edit-harga" class="form-label">Price</label>
+            <input
+              type="number"
+              class="form-control"
+              name="harga"
+              id="edit-harga"
+              required
+            />
+          </div>
+          <div class="mb-3">
+            <label for="edit-description" class="form-label">Description</label>
+            <textarea
+              class="form-control"
+              name="description"
+              id="edit-description"
+              rows="3"
+            ></textarea>
+          </div>
+          <div class="mb-3">
+            <label for="edit-image" class="form-label">Image (optional)</label>
+            <input
+              class="form-control"
+              type="file"
+              name="image"
+              id="edit-image"
+              accept="image/*"
+            />
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            data-bs-dismiss="modal"
+          >
+            Close
+          </button>
+          <button type="submit" class="btn btn-primary">Update</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<script>
+  const editModal = document.getElementById("editMaterialModal");
+  editModal.addEventListener("show.bs.modal", function (event) {
+    const button = event.relatedTarget;
+    const id = button.getAttribute("data-id");
+    const title = button.getAttribute("data-title");
+    const harga = button.getAttribute("data-harga");
+    const description = button.getAttribute("data-description");
+
+    const form = document.getElementById("editMaterialForm");
+    form.action = `/admin/raw-materials/update/${id}`;
+
+    document.getElementById("edit-title").value = title;
+    document.getElementById("edit-harga").value = harga;
+    document.getElementById("edit-description").value = description;
+  });
+</script>
