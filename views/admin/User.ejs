@@ -1,0 +1,110 @@
+<div class="container mt-4">
+    <h3>Manajemen User</h3>
+    <% if (messages.success) { %>
+      <div class="alert alert-success"><%= messages.success %></div>
+    <% } %>
+    <% if (messages.error) { %>
+      <div class="alert alert-danger"><%= messages.error %></div>
+    <% } %>
+  
+    <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#createModal">Tambah User</button>
+  
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th>Nama</th>
+          <th>Email</th>
+          <th>Role</th>
+          <th>Aksi</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% users.forEach(u => { %>
+          <tr>
+            <td><%= u.name %></td>
+            <td><%= u.email %></td>
+            <td><%= u.role %></td>
+            <td>
+              <button class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#editModal-<%= u._id %>">Edit</button>
+              <form action="/admin/user/delete/<%= u._id %>" method="POST" class="d-inline" onsubmit="return confirm('Yakin ingin hapus?')">
+                <button class="btn btn-sm btn-danger">Hapus</button>
+              </form>
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+  
+  <!-- Modal Tambah -->
+  <div class="modal fade" id="createModal" tabindex="-1">
+    <div class="modal-dialog">
+      <form action="/admin/user/create" method="POST" class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Tambah User</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-2">
+            <label>Nama</label>
+            <input type="text" name="name" class="form-control" required>
+          </div>
+          <div class="mb-2">
+            <label>Email</label>
+            <input type="email" name="email" class="form-control" required>
+          </div>
+          <div class="mb-2">
+            <label>Password</label>
+            <input type="password" name="password" class="form-control" required>
+          </div>
+          <div class="mb-2">
+            <label>Role</label>
+            <select name="role" class="form-control" required>
+              <option value="admin">Admin</option>
+              <option value="customer">Customer</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+          <button type="submit" class="btn btn-primary">Tambah</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  
+  <!-- Modal Edit untuk setiap user -->
+  <% users.forEach(u => { %>
+    <div class="modal fade" id="editModal-<%= u._id %>" tabindex="-1">
+      <div class="modal-dialog">
+        <form action="/admin/user/edit/<%= u._id %>" method="POST" class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Edit User</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <div class="mb-2">
+              <label>Nama</label>
+              <input type="text" name="name" value="<%= u.name %>" class="form-control" required>
+            </div>
+            <div class="mb-2">
+              <label>Email</label>
+              <input type="email" name="email" value="<%= u.email %>" class="form-control" required>
+            </div>
+            <div class="mb-2">
+              <label>Role</label>
+              <select name="role" class="form-control" required>
+                <option value="admin" <%= u.role === 'admin' ? 'selected' : '' %>>Admin</option>
+                <option value="customer" <%= u.role === 'customer' ? 'selected' : '' %>>Customer</option>
+              </select>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+            <button type="submit" class="btn btn-success">Simpan</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  <% }) %>
+  
