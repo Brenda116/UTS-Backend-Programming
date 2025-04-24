@@ -1,3 +1,4 @@
+// Schema untuk Inventory Monseu
 const mongoose = require("mongoose");
 
 const monseuInventorySchema = new mongoose.Schema(
