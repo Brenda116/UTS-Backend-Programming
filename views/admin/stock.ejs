@@ -1,0 +1,129 @@
+<div class="container mt-5">
+  <div class="row mb-5" id="detail-section" style="display: none">
+    <div class="col-6">
+      <img src="" alt="" id="detail-image" class="img-fluid" />
+    </div>
+    <div class="col-6">
+      <h2 id="detail-title"></h2>
+      <h3><span id="detail-stock"></span> in stock</h3>
+      <p class="text-muted" id="detail-description"></p>
+      <p class="text-primary">Update stock</p>
+      <div class="d-flex gap-2 mb-3">
+        <button class="btn btn-primary" id="add-btn">
+          <i class="fa-solid fa-plus"></i>
+        </button>
+        <input
+          type="number"
+          class="form-control"
+          id="stock-input"
+          style="width: 80px"
+          value="0"
+        />
+        <button class="btn btn-primary" id="min-btn">
+          <i class="fa-solid fa-minus"></i>
+        </button>
+      </div>
+      <button class="btn btn-primary w-full" id="update-btn">Update</button>
+    </div>
+  </div>
+
+  <div class="row">
+    <% rawMaterials.forEach(rb => { %>
+    <div class="col-md-4">
+      <div class="card mb-3 shadow-sm">
+        <% if (rb.image) { %>
+        <img
+          src="<%= rb.image %>"
+          class="card-img-top"
+          style="height: 200px; object-fit: cover"
+        />
+        <% } %>
+        <div class="card-body">
+          <h5 class="card-title"><%= rb.title %></h5>
+          <p class="card-text"><%= rb.description || "-" %></p>
+          <p class="card-text"><%= rb.stock || "0" %></p>
+          <p class="card-text">
+            <strong>Harga:</strong> Rp <%= rb.harga.toLocaleString("id-ID") %>
+          </p>
+          <a
+            href="#"
+            class="btn btn-primary w-100 lihat-stok"
+            data-id="<%= rb._id %>"
+            data-title="<%= rb.title %>"
+            data-description="<%= rb.description %>"
+            data-image="<%= rb.image %>"
+            data-stock="<%= rb.stock %>"
+          >
+            Pilih
+          </a>
+        </div>
+      </div>
+    </div>
+    <% }) %>
+  </div>
+</div>
+
+<script>
+  let currentRawBarangId = null;
+
+  document.querySelectorAll(".lihat-stok").forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+      e.preventDefault();
+
+      currentRawBarangId = btn.dataset.id;
+      const title = btn.dataset.title;
+      const desc = btn.dataset.description || "-";
+      const image = btn.dataset.image || "";
+      const stock = btn.dataset.stock;
+
+      document.getElementById("detail-title").textContent = title;
+      document.getElementById("detail-description").textContent = desc;
+      document.getElementById("detail-stock").textContent = stock;
+      document.getElementById("detail-image").src = image;
+      document.getElementById("stock-input").value = stock;
+
+      document.getElementById("detail-section").style.display = "flex";
+    });
+  });
+
+  document.getElementById("add-btn").addEventListener("click", () => {
+    const input = document.getElementById("stock-input");
+    input.value = parseInt(input.value || 0) + 1;
+  });
+
+  document.getElementById("min-btn").addEventListener("click", () => {
+    const input = document.getElementById("stock-input");
+    input.value = Math.max(0, parseInt(input.value || 0) - 1);
+  });
+
+  document.getElementById("update-btn").addEventListener("click", async () => {
+    const jumlah = parseInt(document.getElementById("stock-input").value || 0);
+
+    if (!currentRawBarangId) {
+      return alert("Pilih barang dan tentukan jumlah perubahan stok!");
+    }
+
+    try {
+      const res = await fetch("/admin/stock/update", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          rawBarangId: currentRawBarangId,
+          jumlah: jumlah,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) throw new Error(data.message || "Gagal update stok");
+
+      alert("Stok berhasil diupdate!");
+      document.getElementById("stock-input").value = 0;
+      location.reload();
+    } catch (err) {
+      alert("Terjadi kesalahan: " + err.message);
+    }
+  });
+</script>
