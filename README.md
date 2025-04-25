@@ -32,3 +32,27 @@ Menghubungkan URL dengan controller yang sesuai:
 * Halaman khusus:
     * Admin: raw_material, stock, user management
     * Customer: popular items, dashboard sederhana
+## Fitur Utama
+1. Autentikasi User:
+    - Login/Logout
+    - Registrasi dengan role (admin/customer)
+    - Session management
+2. Manajemen Bahan Baku:
+    - CRUD bahan baku
+    - Upload gambar
+    - Tracking harga
+3. Manajemen Stok:
+    - Update stok barang
+    - History perubahan stok
+    - Penentuan lokasi penyimpanan
+4. Dashboard Admin:
+    - Konten yang dapat disesuaikan
+    - Manajemen user
+5. Tampilan Customer:
+    - Melihat produk populer
+    - Informasi stok tersedia
+## Cara Menjalankan
+1. Install dependensi: npm install
+2. Buat file .env sesuai template.
+3. Jalankan MongoDB lokal (CONNECT).
+4. Aktifkan aplikasi: npm run dev
